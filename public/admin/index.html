@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin — Joshra Photography</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin">
+
+<!-- ═════════ Login ═════════ -->
+<section class="login" id="loginView" hidden>
+  <form class="login-card" id="loginForm">
+    <div class="logo center">
+      <svg class="ic" aria-hidden="true"><use href="/img/icons.svg#logo"/></svg>
+      <span class="logo-text"><b>Joshra</b><span>Admin</span></span>
+    </div>
+    <p class="muted">Sign in to manage your photos, films and enquiries.</p>
+    <div class="field"><label for="lUser">Username</label><input id="lUser" name="username" autocomplete="username" required></div>
+    <div class="field"><label for="lPass">Password</label><input id="lPass" name="password" type="password" autocomplete="current-password" required></div>
+    <div class="form-msg err" id="loginMsg" role="alert"></div>
+    <button class="btn btn-cream block" type="submit">Sign in <svg class="ic" aria-hidden="true"><use href="/img/icons.svg#arrow-right"/></svg></button>
+    <a class="back" href="/">← Back to website</a>
+  </form>
+</section>
+
+<!-- ═════════ App ═════════ -->
+<div class="app" id="appView" hidden>
+  <aside class="side">
+    <div class="logo">
+      <svg class="ic" aria-hidden="true"><use href="/img/icons.svg#logo"/></svg>
+      <span class="logo-text"><b>Joshra</b><span>Admin</span></span>
+    </div>
+    <nav class="side-nav" id="tabs">
+      <button type="button" data-tab="upload" class="active"><svg class="ic"><use href="/img/icons.svg#upload"/></svg>Upload</button>
+      <button type="button" data-tab="library"><svg class="ic"><use href="/img/icons.svg#grid"/></svg>Library</button>
+      <button type="button" data-tab="enquiries"><svg class="ic"><use href="/img/icons.svg#inbox"/></svg>Enquiries <span class="pill" id="unreadPill" hidden>0</span></button>
+      <button type="button" data-tab="account"><svg class="ic"><use href="/img/icons.svg#key"/></svg>Account</button>
+    </nav>
+    <div class="side-foot">
+      <a href="/" target="_blank" rel="noopener"><svg class="ic"><use href="/img/icons.svg#eye"/></svg>View website</a>
+      <button type="button" id="logoutBtn"><svg class="ic"><use href="/img/icons.svg#logout"/></svg>Sign out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="stats-row" id="statsRow"></div>
+
+    <!-- Upload -->
+    <section class="panel" id="tab-upload">
+      <h1>Upload <em>photos &amp; videos</em></h1>
+      <div class="grid-2">
+        <div class="field"><label for="upCat">Category</label>
+          <select id="upCat">
+            <option value="weddings">Weddings</option><option value="portraits">Portraits</option>
+            <option value="events">Events</option><option value="aerials">Aerials</option>
+            <option value="films">Films</option><option value="stories">Stories</option>
+          </select>
+        </div>
+        <div class="field"><label for="upTitle">Title <small>(optional – used when uploading one file)</small></label><input id="upTitle" maxlength="120" placeholder="e.g. Ananya &amp; Rohan, Hyderabad"></div>
+      </div>
+      <div class="field"><label for="upCaption">Caption / story text <small>(optional)</small></label><textarea id="upCaption" maxlength="400" rows="2"></textarea></div>
+
+      <label class="drop" id="drop" for="fileInput">
+        <svg class="ic"><use href="/img/icons.svg#upload"/></svg>
+        <b>Drag &amp; drop files here, or click to browse</b>
+        <span>Images: JPG, PNG, WebP, GIF, AVIF (up to 25 MB) · Videos: MP4, WebM, MOV (up to 1 GB)</span>
+        <input type="file" id="fileInput" multiple accept=".jpg,.jpeg,.png,.webp,.gif,.avif,.mp4,.webm,.mov,.m4v,image/*,video/*" hidden>
+      </label>
+
+      <ul class="queue" id="queue"></ul>
+      <div class="actions">
+        <button class="btn btn-cream" id="startUpload" type="button" disabled>Start upload</button>
+        <button class="btn btn-outline" id="clearQueue" type="button" disabled>Clear list</button>
+      </div>
+    </section>
+
+    <!-- Library -->
+    <section class="panel" id="tab-library" hidden>
+      <h1>Media <em>library</em></h1>
+      <div class="toolbar">
+        <select id="libCat" aria-label="Filter by category"><option value="">All categories</option></select>
+        <select id="libType" aria-label="Filter by type"><option value="">Photos &amp; videos</option><option value="image">Photos only</option><option value="video">Videos only</option></select>
+        <span class="muted" id="libCount"></span>
+      </div>
+      <div class="lib" id="lib"></div>
+    </section>
+
+    <!-- Enquiries -->
+    <section class="panel" id="tab-enquiries" hidden>
+      <h1>Client <em>enquiries</em></h1>
+      <div class="enq" id="enqList"></div>
+    </section>
+
+    <!-- Account -->
+    <section class="panel" id="tab-account" hidden>
+      <h1>Account <em>security</em></h1>
+      <form class="form single" id="pwForm" autocomplete="off">
+        <div class="field full"><label for="pwCur">Current password</label><input id="pwCur" type="password" autocomplete="current-password" required></div>
+        <div class="field full"><label for="pwNew">New password <small>(min 10 characters)</small></label><input id="pwNew" type="password" autocomplete="new-password" minlength="10" required></div>
+        <div class="field full"><label for="pwNew2">Repeat new password</label><input id="pwNew2" type="password" autocomplete="new-password" minlength="10" required></div>
+        <div class="full form-msg" id="pwMsg" role="status"></div>
+        <div class="full"><button class="btn btn-cream" type="submit">Change password</button></div>
+      </form>
+      <p class="muted note">Other devices are signed out automatically when you change your password. Contact details, social links and the stats shown on the homepage are edited in <code>site.config.json</code> in the project folder.</p>
+    </section>
+  </main>
+</div>
+
+<!-- Edit dialog -->
+<dialog class="dlg" id="editDlg">
+  <form method="dialog" id="editForm">
+    <h2>Edit item</h2>
+    <div class="field"><label for="edTitle">Title</label><input id="edTitle" maxlength="120"></div>
+    <div class="field"><label for="edCaption">Caption</label><textarea id="edCaption" maxlength="400" rows="3"></textarea></div>
+    <div class="field"><label for="edCat">Category</label><select id="edCat"></select></div>
+    <div class="dlg-actions">
+      <button class="btn btn-outline" type="button" id="edCancel">Cancel</button>
+      <button class="btn btn-cream" type="submit" id="edSave">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status"></div>
+<script src="/js/admin.js" defer></script>
+</body>
+</html>
